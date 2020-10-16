@@ -7,18 +7,18 @@ branch ----------> JAMES
 charges ----------> JAMES
 client ----------> JAMES
 clients_next_of_kin ----------> JAMES
-client_contact status
-client_credentials
-fixed-deposit_product
+client_contact status --------> AKPOSIEYEFA
+client_credentials  ----------> AKPOSIEYEFA
+fixed-deposit_product --------> AKPOSIEYEFA
 institution ----------> JAMES
 loan_product ----------> JAMES
 pc_bio ----------> JAMES
-products
-savings_product
-staff
-teller
-teller_assigned
-teller_has_vault_transaction
-users
-vault
-vault_transaction
+products ---------> AKPOSIEYEFA
+savings_product ---------> AKPOSIEYEFA
+staff ------------------->AKPOSIEYEFA
+teller ------------------> AKPOSIEYEFA
+teller_assigned ---------> AKPOSIEYEFA
+teller_has_vault_transaction ------> AKPOSIEYEFA
+users ------------------> AKPOSIEYEFA
+vault ------------------> AKPOSIEYEFA
+vault_transaction ------> AKPOSIEYEFA
