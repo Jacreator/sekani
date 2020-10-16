@@ -1,127 +1,132 @@
 <?php
-
+include('../../path.php');
 include(ROOT_PATH . "/app/database/db.php");
 include(ROOT_PATH . "/app/helpers/middleware.php");
-include(ROOT_PATH . "/app/helpers/validatePost.php");
+//include(ROOT_PATH . "/app/helpers/validateAccounts.php");
 
-$table = 'posts';
-
-$topics = selectAll('topics');
-$posts = get_posts_with_username();
-
+$table = 'loan_product';
 
 $errors = array();
-$id = "";
-$title = "";
-$body = "";
-$topic_id = "";
-$published = "";
+$id = '';
+$name = '';
+$description = '';
 
+$loan_product = selectAll($table);
+//dd($accounts);
+
+/**
+ * get information from the controller back to frontend
+ *
+ * @param $data
+ * @return array
+ */
+function outputData($data)
+{
+    return [
+        'description' => $data[''],
+        'description1' => $data[''],
+        'description2' => $data[''],
+        'description3' => $data[''],
+        'description4' => $data[''],
+        'description5' => $data[''],
+        'description6' => $data[''],
+//        'description7' => $data[''],
+//        'description8' => $data[''],
+//        'description9' => $data[''],
+//        'description0' => $data[''],
+    ];
+}
+
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the
+ * action
+ *
+ */
+if (isset($_POST['add-loan'])) {
+    adminOnly();
+
+//    check the post array before sending to database
+    $errors = validate($_POST);
+
+    if (count($errors) === 0) {
+        unset($_POST['add-loan']);
+
+//        move post into database column
+        $data = [
+            'name' => $_POST[''],
+            'rcn' => $_POST[''],
+            'state' => $_POST[''],
+            'lga' => $_POST[''],
+            'address' => $_POST[''],
+            'incoporation_date' => $_POST[''],
+            'phone' => $_POST[''],
+            'email' => $_POST[''],
+            'website' => $_POST[''],
+            'image' => $_POST[''],
+            'sender_id' => $_POST[''],
+        ];
+
+//        the sql query to add to database
+        $loan_id = create($table, $data);
+        dd($loan_id);
+        $_SESSION['message'] = 'Client created successfully';
+        $_SESSION['type'] = 'success';
+//        go to base page
+        header('location: ' . BASE_URL . '/admin/topics/index.php');
+        exit();
+    } else {
+        outputData($_POST);
+    }
+}
+
+/**
+ * a isset that takes the trigger from the views button
+ * and returns an individual account details
+ *
+ */
 if (isset($_GET['id'])) {
-    $post = selectOne($table, ['id' => $_GET['id']]);
-
-    $id = $post['id'];
-    $title = $post['title'];
-    $body = $post['body'];
-    $topic_id = $post['topic_id'];
-    $published = $post['published'];
+    $id = $_GET['id'];
+    $loanDetails = selectOne($table, ['idinstitution' => $id]);
+    outputData($loanDetails);
 }
 
-if (isset($_GET['delete_id'])) {
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the
+ * action
+ * and delete the record from database
+ */
+if (isset($_GET['del_id'])) {
     adminOnly();
-    $count = delete($table, $_GET['delete_id']);
-    $_SESSION['message'] = "Post deleted successfully";
-    $_SESSION['type'] = "success";
-    header("location: " . BASE_URL . "/admin/posts/index.php"); 
+    $id = $_GET['del_id'];
+    $count = delete($table, $id);
+    $_SESSION['message'] = 'Loan deleted successfully';
+    $_SESSION['type'] = 'success';
+    header('location: ' . BASE_URL . '/admin/topics/index.php');
     exit();
 }
 
-if (isset($_GET['published']) && isset($_GET['p_id'])) {
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the action
+ * update the specified account records
+ *
+ */
+if (isset($_POST['update-loan'])) {
     adminOnly();
-    $published = $_GET['published'];
-    $p_id = $_GET['p_id'];
-    $count = update($table, $p_id, ['published' => $published]);
-    $_SESSION['message'] = "Post published state changed!";
-    $_SESSION['type'] = "success";
-    header("location: " . BASE_URL . "/admin/posts/index.php"); 
-    exit();
-}
+    $errors = validate($_POST);
 
-
-
-if (isset($_POST['add-post'])) {
-    adminOnly();
-    $errors = validatePost($_POST);
-
-    if (!empty($_FILES['image']['name'])) {
-        $image_name = time() . '_' . $_FILES['image']['name'];
-        $destination = ROOT_PATH . "/assets/images/" . $image_name;
-
-        $result = move_uploaded_file($_FILES['image']['tmp_name'], $destination);
-
-        if ($result) {
-           $_POST['image'] = $image_name;
-        } else {
-            array_push($errors, "Failed to upload image");
-        }
-    } else {
-       array_push($errors, "Post image required");
-    }
-    if (count($errors) == 0) {
-        unset($_POST['add-post']);
-        $_POST['user_id'] = $_SESSION['id'];
-        $_POST['published'] = isset($_POST['published']) ? 1 : 0;
-        $_POST['body'] = htmlentities($_POST['body']);
-    
-        $post_id = create($table, $_POST);
-        $_SESSION['message'] = "Post created successfully";
-        $_SESSION['type'] = "success";
-        header("location: " . BASE_URL . "/admin/posts/index.php"); 
-        exit();    
-    } else {
-        $title = $_POST['title'];
-        $body = $_POST['body'];
-        $topic_id = $_POST['topic_id'];
-        $published = isset($_POST['published']) ? 1 : 0;
-    }
-}
-
-
-if (isset($_POST['update-post'])) {
-    adminOnly();
-    $errors = validatePost($_POST);
-
-    if (!empty($_FILES['image']['name'])) {
-        $image_name = time() . '_' . $_FILES['image']['name'];
-        $destination = ROOT_PATH . "/assets/images/" . $image_name;
-
-        $result = move_uploaded_file($_FILES['image']['tmp_name'], $destination);
-
-        if ($result) {
-           $_POST['image'] = $image_name;
-        } else {
-            array_push($errors, "Failed to upload image");
-        }
-    } else {
-       array_push($errors, "Post image required");
-    }
-
-    if (count($errors) == 0) {
+    if (count($errors) === 0) {
         $id = $_POST['id'];
-        unset($_POST['update-post'], $_POST['id']);
-        $_POST['user_id'] = $_SESSION['id'];
-        $_POST['published'] = isset($_POST['published']) ? 1 : 0;
-        $_POST['body'] = htmlentities($_POST['body']);
-    
-        $post_id = update($table, $id, $_POST);
-        $_SESSION['message'] = "Post updated successfully";
-        $_SESSION['type'] = "success";
-        header("location: " . BASE_URL . "/admin/posts/index.php");       
+        unset($_POST['update-loan'], $_POST['id']);
+        $institutionUpdate = update($table, $id, $_POST);
+        $_SESSION['message'] = 'Loan Product Information updated successfully';
+        $_SESSION['type'] = 'success';
+        header('location: ' . BASE_URL . '/admin/topics/index.php');
+        exit();
     } else {
-        $title = $_POST['title'];
-        $body = $_POST['body'];
-        $topic_id = $_POST['topic_id'];
-        $published = isset($_POST['published']) ? 1 : 0;
+        outputData($_POST);
     }
 
 }

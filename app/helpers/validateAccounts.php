@@ -26,15 +26,15 @@ function validateAccount($account)
     $data = array();
 
 
-    foreach ($account as &$value) {
-        if (empty($value)) {
-            $errors[] = 'Account is required';
-        } else {
-            $nameOfVar = trim($value);
-            clean($nameOfVar);
-        }
-    }
-    unset($value); // break the reference with the last element
+//    foreach ($account as &$value) {
+//        if (empty($value)) {
+//            $errors[] = 'Account is required';
+//        } else {
+//            $nameOfVar = trim($value);
+//            clean($nameOfVar);
+//        }
+//    }
+//    unset($value); // break the reference with the last element
 
 
     if (empty($account[''])) {

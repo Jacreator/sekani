@@ -1,95 +1,149 @@
 <?php
-include ('../../path.php');
+include('../../path.php');
 include(ROOT_PATH . "/app/database/db.php");
-//include(ROOT_PATH . "/app/helpers/middleware.php");
-//include(ROOT_PATH . "/app/helpers/validateTopic.php");
+include(ROOT_PATH . "/app/helpers/middleware.php");
+//include(ROOT_PATH . "/app/helpers/validateAccounts.php");
 
-$table = 'client';
+$table = 'clients';
 
 $errors = array();
 $id = '';
 $name = '';
 $description = '';
 
-//$topics = selectAll($table);
+$accounts = selectAll($table);
+//dd($accounts);
 
-
-//if (isset($_POST['add-topic'])) {
-//    adminOnly();
-//    $errors = validateTopic($_POST);
-
-//    if (count($errors) === 0) {
-//        unset($_POST['add-topic']);
-$data = [
-    'firstname'=>'1234567890',
-    'middlename'=>'saving',
-    'lastname'=>11000.00,
-    'displayname'=>2000.00,
-    'account_officer'=>'12-8-2020',
-    'client_type'=>'20-9-2020',
-    'phone_no'=>'2',
-    'email'=>'test@test.com',
-    'state_of_origin'=>'test@test.com',
-    'country'=>'test@test.com',
-    'lga'=>'test@test.com',
-    'occupation'=>'test@test.com',
-    'gender'=>'test@test.com',
-    'is_staff'=>'test@test.com',
-    'activation_date'=>'test@test.com',
-    'submitted_on_date'=>'test@test.com',
-    'client_status'=>'test@test.com',
-    'institution_idinstitution'=>'1',
-    'branch_idbranch '=>'1',
-
-];
-        $topic_id = create($table, $data);
-        dd($topic_id);
-//        $_SESSION['message'] = 'Topic created successfully';
-//        $_SESSION['type'] = 'success';
-//        header('location: ' . BASE_URL . '/admin/topics/index.php');
-//        exit();
-//    } else {
-//        $name = $_POST['name'];
-//        $description = $_POST['description'];
-//    }
-//}
-
-
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $topic = selectOne($table, ['id' => $id]);
-    $id = $topic['id'];
-    $name = $topic['name'];
-    $description = $topic['description'];
+/**
+ * get information from the controller back to frontend
+ *
+ * @param $data
+ * @return array
+ */
+function outputData($data)
+{
+    return [
+        'description' => $data[''],
+        'description1' => $data[''],
+        'description2' => $data[''],
+        'description3' => $data[''],
+        'description4' => $data[''],
+        'description5' => $data[''],
+        'description6' => $data[''],
+//        'description7' => $data[''],
+//        'description8' => $data[''],
+//        'description9' => $data[''],
+//        'description0' => $data[''],
+    ];
 }
 
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the
+ * action
+ *
+ */
+if (isset($_POST['add-client'])) {
+    adminOnly();
+
+//    check the post array before sending to database
+    $errors = validateAccount($_POST);
+
+//    $data = [
+//        'account_no' => '1234556',
+//        'account_type' => '1234556',
+//        'last_deposit' => '1234556',
+//        'last_withdrawal' => '1234556',
+//        'activation_date' => '1234556',
+//        'last_activity_date' => '1234556',
+//        'client_idClient' => '1234556'
+//    ];
+    if (count($errors) === 0) {
+        unset($_POST['add-branch']);
+
+//        move post into database column
+        $data = [
+            'firstname' => $_POST[''],
+            'middlename' => $_POST[''],
+            'lastname' => $_POST[''],
+            'displayname' => $_POST[''],
+            'account_officer' => $_POST[''],
+            'client_type' => $_POST[''],
+            'phone_no' => $_POST[''],
+            'email' => $_POST[''],
+            'state_of_origin' => $_POST[''],
+            'country' => $_POST[''],
+            'lga' => $_POST[''],
+            'occupation' => $_POST[''],
+            'gender' => $_POST[''],
+            'is_staff' => $_POST[''],
+            'activation_date' => $_POST[''],
+            'submitted_on_date' => $_POST[''],
+            'client_status' => $_POST[''],
+            'institution_idinstitution' => $_POST[''],
+            'branch_idbranch' => $_POST[''],
+        ];
+
+//        the sql query to add to database
+        $client_id = create($table, $data);
+        dd($client_id);
+        $_SESSION['message'] = 'Client created successfully';
+        $_SESSION['type'] = 'success';
+//        go to base page
+        header('location: ' . BASE_URL . '/admin/topics/index.php');
+        exit();
+    } else {
+        outputData($_POST);
+    }
+}
+
+/**
+ * a isset that takes the trigger from the views button
+ * and returns an individual account details
+ *
+ */
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $clientDetails = selectOne($table, ['idclient' => $id]);
+    outputData($clientDetails);
+}
+
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the
+ * action
+ * and delete the record from database
+ */
 if (isset($_GET['del_id'])) {
     adminOnly();
     $id = $_GET['del_id'];
     $count = delete($table, $id);
-    $_SESSION['message'] = 'Topic deleted successfully';
+    $_SESSION['message'] = 'Client deleted successfully';
     $_SESSION['type'] = 'success';
     header('location: ' . BASE_URL . '/admin/topics/index.php');
     exit();
 }
 
-
-if (isset($_POST['update-topic'])) {
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the action
+ * update the specified account records
+ *
+ */
+if (isset($_POST['update-client'])) {
     adminOnly();
-    $errors = validateTopic($_POST);
+    $errors = validate($_POST);
 
-    if (count($errors) === 0) { 
+    if (count($errors) === 0) {
         $id = $_POST['id'];
-        unset($_POST['update-topic'], $_POST['id']);
-        $topic_id = update($table, $id, $_POST);
-        $_SESSION['message'] = 'Topic updated successfully';
+        unset($_POST['update-client'], $_POST['id']);
+        $branchUpdate = update($table, $id, $_POST);
+        $_SESSION['message'] = 'Client Information updated successfully';
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit();
     } else {
-        $id = $_POST['id'];
-        $name = $_POST['name'];
-        $description = $_POST['description'];
+        outputData($_POST);
     }
 
 }

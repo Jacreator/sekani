@@ -1,8 +1,8 @@
 <?php
-include ('../../path.php');
+include('../../path.php');
 include(ROOT_PATH . "/app/database/db.php");
 //include(ROOT_PATH . "/app/helpers/middleware.php");
-//include(ROOT_PATH . "/app/helpers/validateTopic.php");
+//include(ROOT_PATH . "/app/helpers/validateAccounts.php");
 
 $table = 'branch';
 
@@ -11,77 +11,131 @@ $id = '';
 $name = '';
 $description = '';
 
-//$topics = selectAll($table);
+$accounts = selectAll($table);
+//dd($accounts);
 
+/**
+ * get information from the controller back to frontend
+ *
+ * @param $data
+ * @return array
+ */
+function outputData($data)
+{
+    return [
+        'description' => $data[''],
+        'description1' => $data[''],
+        'description2' => $data[''],
+        'description3' => $data[''],
+        'description4' => $data[''],
+        'description5' => $data[''],
+        'description6' => $data[''],
+//        'description7' => $data[''],
+//        'description8' => $data[''],
+//        'description9' => $data[''],
+//        'description0' => $data[''],
+    ];
+}
 
-//if (isset($_POST['add-topic'])) {
-//    adminOnly();
-//    $errors = validateTopic($_POST);
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the
+ * action
+ *
+ */
+if (isset($_POST['add-branch'])) {
+    adminOnly();
 
-//    if (count($errors) === 0) {
-//        unset($_POST['add-topic']);
-$data = [
-    'name'=>'james',
-    'email'=>'test@gmail.com',
-    'phone_no'=>'98456789',
-    'state'=>'fct',
-    'lga'=>'gudu',
-    'location'=>'dg global',
-    'opened_date'=>date("Y-m-d"),
-    'heirachy'=>'boss',
-    'status'=>'active',
-    'parent_id'=>'akpis',
-    'institution_idinstitution'=>'1',
-];
-//$topic_id = create($table, $data);
+//    check the post array before sending to database
+    $errors = validateAccount($_POST);
 
-//        $_SESSION['message'] = 'Topic created successfully';
-//        $_SESSION['type'] = 'success';
-//        header('location: ' . BASE_URL . '/admin/topics/index.php');
-//        exit();
-//    } else {
-//        $name = $_POST['name'];
-//        $description = $_POST['description'];
-//    }
-//}
+//    $data = [
+//        'account_no' => '1234556',
+//        'account_type' => '1234556',
+//        'last_deposit' => '1234556',
+//        'last_withdrawal' => '1234556',
+//        'activation_date' => '1234556',
+//        'last_activity_date' => '1234556',
+//        'client_idClient' => '1234556'
+//    ];
+    if (count($errors) === 0) {
+        unset($_POST['add-branch']);
 
+//        move post into database column
+        $data = [
+            'name' => $_POST[''],
+            'email' => $_POST[''],
+            'phone_no' => $_POST[''],
+            'state' => $_POST[''],
+            'lga' => $_POST[''],
+            'location' => $_POST[''],
+            'opened_date' => $_POST[''],
+            'heirachy' => $_POST[''],
+            'status' => $_POST[''],
+            'parent_id' => $_POST[''],
+            'institution_idinstitution' => $_POST[''],
+        ];
 
-//if (isset($_GET['id'])) {
-    $id = 1;
-    $topic = selectOne($table, ['idbranch' => $id]);
-dd($topic);
-//    $id = $topic['id'];
-//    $name = $topic['name'];
-//    $description = $topic['description'];
-//}
+//        the sql query to add to database
+        $branch_id = create($table, $data);
+        dd($branch_id);
+        $_SESSION['message'] = 'Account created successfully';
+        $_SESSION['type'] = 'success';
+//        go to base page
+        header('location: ' . BASE_URL . '/admin/topics/index.php');
+        exit();
+    } else {
+        outputData($_POST);
+    }
+}
 
+/**
+ * a isset that takes the trigger from the views button
+ * and returns an individual account details
+ *
+ */
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $branchDetails = selectOne($table, ['idbranch' => $id]);
+    outputData($branchDetails);
+}
+
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the
+ * action
+ * and delete the record from database
+ */
 if (isset($_GET['del_id'])) {
     adminOnly();
     $id = $_GET['del_id'];
     $count = delete($table, $id);
-    $_SESSION['message'] = 'Topic deleted successfully';
+    $_SESSION['message'] = 'Branch deleted successfully';
     $_SESSION['type'] = 'success';
     header('location: ' . BASE_URL . '/admin/topics/index.php');
     exit();
 }
 
-
-if (isset($_POST['update-topic'])) {
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the action
+ * update the specified account records
+ *
+ */
+if (isset($_POST['update-branch'])) {
     adminOnly();
-    $errors = validateTopic($_POST);
+    $errors = validate($_POST);
 
     if (count($errors) === 0) {
         $id = $_POST['id'];
-        unset($_POST['update-topic'], $_POST['id']);
-        $topic_id = update($table, $id, $_POST);
-        $_SESSION['message'] = 'Topic updated successfully';
+        unset($_POST['update-branch'], $_POST['id']);
+        $branchUpdate = update($table, $id, $_POST);
+        $_SESSION['message'] = 'Branch Information updated successfully';
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit();
     } else {
-        $id = $_POST['id'];
-        $name = $_POST['name'];
-        $description = $_POST['description'];
+        outputData($_POST);
     }
 
 }
