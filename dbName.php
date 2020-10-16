@@ -7,7 +7,9 @@ branch ----------> JAMES
 charges ----------> JAMES
 client ----------> JAMES
 clients_next_of_kin ----------> JAMES
-client_contact status --------> AKPOSIEYEFA
+
+
+client_contact_status --------> AKPOSIEYEFA
 client_credentials  ----------> AKPOSIEYEFA
 fixed-deposit_product --------> AKPOSIEYEFA
 institution ----------> JAMES

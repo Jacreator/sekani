@@ -13,6 +13,18 @@ $description = '';
 
 $accounts = selectAll($table);
 //dd($accounts);
+function outputData($data)
+{
+    return [
+        'description' => $data['id_card'],
+        'description1' => $data['ard_url'],
+        'description2' => $data['signature'],
+        'description3' => $data['passport'],
+        'description4' => $data['rcn'],
+        'description5' => $data['bvn'],
+        'description6' => $data['client_idClient'],
+    ];
+}
 
 
 if (isset($_POST['add-account'])) {
@@ -24,7 +36,6 @@ if (isset($_POST['add-account'])) {
     if (count($errors) === 0) {
         unset($_POST['add-account']);
         $data = [
-            'idclient_credentials'=>$_POST[''],
             'id_card'=>$_POST[''],
             'card_url'=>$_POST[''],
             'signature'=>$_POST[''],
@@ -33,7 +44,7 @@ if (isset($_POST['add-account'])) {
             'bvn'=>$_POST[''],
             'client_idclient'=>$_POST['']
         ];
-        $account_id = create($table, $data);
+        $query = create($table, $data);
 //        dd($account_id);
         $_SESSION['message'] = 'Successful';
         $_SESSION['type'] = 'success';
@@ -58,7 +69,7 @@ if (isset($_POST['add-account'])) {
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $topic = selectOne($table, ['id' => $id]);
+    $query = selectOne($table, ['idclient_credentials' => $id]);
     $id = $topic['id'];
     $name = $topic['name'];
     $description = $topic['description'];
@@ -67,23 +78,31 @@ if (isset($_GET['id'])) {
 if (isset($_GET['del_id'])) {
     adminOnly();
     $id = $_GET['del_id'];
-    $count = delete($table, $id);
-    $_SESSION['message'] = 'Topic deleted successfully';
+    $query = delete($table, $id);
+    $_SESSION['message'] = 'Credentials deleted successfully';
     $_SESSION['type'] = 'success';
     header('location: ' . BASE_URL . '/admin/topics/index.php');
     exit();
 }
 
 
-if (isset($_POST['update-topic'])) {
+if (isset($_POST['update'])) {
     adminOnly();
     $errors = validateTopic($_POST);
-
+    $data = [
+        'id_card'=>$_POST[''],
+        'card_url'=>$_POST[''],
+        'signature'=>$_POST[''],
+        'passport'=>$_POST[''],
+        'rcn'=>$_POST[''],
+        'bvn'=>$_POST[''],
+        'client_idclient'=>$_POST['']
+    ];
     if (count($errors) === 0) { 
         $id = $_POST['id'];
-        unset($_POST['update-topic'], $_POST['id']);
-        $topic_id = update($table, $id, $_POST);
-        $_SESSION['message'] = 'Topic updated successfully';
+        unset($_POST['update'], $_POST['id']);
+        $query = update($table, $id,  $data);
+        $_SESSION['message'] = 'Credentials updated successfully';
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit();

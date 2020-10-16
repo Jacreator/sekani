@@ -13,6 +13,17 @@ $description = '';
 
 $accounts = selectAll($table);
 //dd($accounts);
+function outputData($data)
+{
+    return [
+        'description' => $data['description'],
+        'description1' => $data['last_transaction_date'],
+        'description1' => $data['balance'],
+        'description1' => $data['created_day'],
+        'description1' => $data['institution_idinstitution'],
+        'description1' => $data['branch_idbranch'],
+    ];
+}
 
 
 if (isset($_POST['submit'])) {
@@ -31,7 +42,7 @@ if (isset($_POST['submit'])) {
             'institution_idinstitution'=>$_POST[''],
             'branch_idbranch'=>$_POST['']
         ];
-        $account_id = create($table, $data);
+        $query = create($table, $data);
 //        dd($account_id);
         $_SESSION['message'] = 'Successful';
         $_SESSION['type'] = 'success';
@@ -56,7 +67,7 @@ if (isset($_POST['submit'])) {
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $topic = selectOne($table, ['id' => $id]);
+    $topic = selectOne($table, ['idvault_transaction' => $id]);
     $id = $topic['id'];
     $name = $topic['name'];
     $description = $topic['description'];
@@ -65,23 +76,31 @@ if (isset($_GET['id'])) {
 if (isset($_GET['del_id'])) {
     adminOnly();
     $id = $_GET['del_id'];
-    $count = delete($table, $id);
-    $_SESSION['message'] = 'Topic deleted successfully';
+    $query = delete($table, $id);
+    $_SESSION['message'] = 'Vault deleted successfully';
     $_SESSION['type'] = 'success';
     header('location: ' . BASE_URL . '/admin/topics/index.php');
     exit();
 }
 
 
-if (isset($_POST['update-topic'])) {
+if (isset($_POST['update'])) {
     adminOnly();
     $errors = validateTopic($_POST);
+    $data = [
+        'description'=>$_POST[''],
+        'last_transaction_date'=>$_POST[''],
+        'balance'=>$_POST[''],
+        'created_day'=>$_POST[''],
+        'institution_idinstitution'=>$_POST[''],
+        'branch_idbranch'=>$_POST['']
+    ];
 
     if (count($errors) === 0) { 
         $id = $_POST['id'];
-        unset($_POST['update-topic'], $_POST['id']);
-        $topic_id = update($table, $id, $_POST);
-        $_SESSION['message'] = 'Topic updated successfully';
+        unset($_POST['update'], $_POST['id']);
+        $query = update($table, $id,  $data);
+        $_SESSION['message'] = 'Vault updated successfully';
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit();
