@@ -4,7 +4,7 @@ function coreValidator($request, $rules = [])
 {
     foreach ($request as $item => $item_value) {
 
-        if (key_exists($item, $rules)) {
+        if (array_key_exists($item, $rules)) {
 
             foreach ($rules[$item] as $rule => $rule_value) {
 
