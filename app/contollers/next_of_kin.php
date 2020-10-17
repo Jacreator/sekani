@@ -82,7 +82,7 @@ if (isset($_POST['add-next-kin'])) {
 
 /**
  * a isset that takes the trigger from the views button
- * and returns an individual account details
+ * and returns an individual details
  *
  */
 if (isset($_GET['id'])) {
@@ -110,7 +110,7 @@ if (isset($_GET['del_id'])) {
 /**
  * a isset that takes the trigger from the views button
  * use the middleware to check if the user have rights for the action
- * update the specified account records
+ * update the specified records
  *
  */
 if (isset($_POST['update-next-of-kin'])) {

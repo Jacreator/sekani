@@ -1,7 +1,7 @@
 <?php
 include ('../../path.php');
 include(ROOT_PATH . "/app/database/db.php");
-//include(ROOT_PATH . "/app/helpers/middleware.php");
+include(ROOT_PATH . "/app/helpers/middleware.php");
 //include(ROOT_PATH . "/app/helpers/validateAccounts.php");
 
 $table = 'users';
@@ -13,28 +13,41 @@ $description = '';
 
 $accounts = selectAll($table);
 //dd($accounts);
+
+/**
+ * get information from the controller back to frontend
+ *
+ * @param $data
+ * @return array
+ */
 function outputData($data)
 {
     return [
-        'description' => $data['username'],
-        'description1' => $data['vpasskey'],
-        'description1' => $data['lastlogin'],
-        'description1' => $data['forgot_passkey'],
-        'description1' => $data['pin'],
-        'description1' => $data['pc_bio_idpc_bio'],
-        'description1' => $data['staff_idstaff'],
-        'description1' => $data['users_idusers'],
+        'description' => $data[''],
+        'description1' => $data[''],
+        'description2' => $data[''],
+        'description3' => $data[''],
+        'description4' => $data[''],
+        'description5' => $data[''],
+        'description6' => $data[''],
+        'description7' => $data[''],
     ];
 }
 
-if (isset($_POST['submit'])) {
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the
+ * action
+ *
+ */
+if (isset($_POST['submit-user'])) {
     adminOnly();
 
     $errors = validateAccount($_POST);
 
 
     if (count($errors) === 0) {
-        unset($_POST['submit']);
+        unset($_POST['submit-user']);
         $data = [
             'username'=>$_POST[''],
             'vpasskey'=>$_POST[''],
@@ -46,74 +59,73 @@ if (isset($_POST['submit'])) {
             'staff_idstaff'=>$_POST[''],
             'users_idusers'=>$_POST[''],
         ];
-        $query = create($table, $data);
+        $user_id = create($table, $data);
 //        dd($account_id);
-        $_SESSION['message'] = 'Successful';
+        $_SESSION['message'] = 'user Created Successful';
         $_SESSION['type'] = 'success';
 //        go to base page
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit(); 
-    } else {
-        $description = $_POST[''];
-        $description1 = $_POST[''];
-        $description2 = $_POST[''];
-        $description3 = $_POST[''];
-        $description4 = $_POST[''];
-        $description5 = $_POST[''];
-        $description6 = $_POST[''];
-        $description7 = $_POST[''];
-        $description8 = $_POST[''];
-        $description9 = $_POST[''];
-        $description0 = $_POST[''];
     }
+    outputData($_POST);
 }
 
-
+/**
+ * a isset that takes the trigger from the views button
+ * and returns an individual account details
+ *
+ */
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $topic = selectOne($table, ['idusers' => $id]);
-    $id = $topic['id'];
-    $name = $topic['name'];
-    $description = $topic['description'];
+    $userDetails = selectOne($table, ['idusers' => $id]);
+    outputData($userDetails);
 }
 
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the
+ * action
+ * and delete the record from database
+ */
 if (isset($_GET['del_id'])) {
     adminOnly();
     $id = $_GET['del_id'];
-    $query = delete($table, $id);
+    $count = delete($table, $id);
     $_SESSION['message'] = 'User deleted successfully';
     $_SESSION['type'] = 'success';
     header('location: ' . BASE_URL . '/admin/topics/index.php');
     exit();
 }
 
-
-if (isset($_POST['update'])) {
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the action
+ * update the specified account records
+ *
+ */
+if (isset($_POST['update-user'])) {
     adminOnly();
     $errors = validateTopic($_POST);
-    $data = [
-        'username'=>$_POST[''],
-        'vpasskey'=>$_POST[''],
-        'lastlogin'=>$_POST[''],
-        'forgot_passkey'=>$_POST[''],
-        'time_created'=>$_POST[''],
-        'pin'=>$_POST[''],
-        'pc_bio_idpc_bio'=>$_POST[''],
-        'staff_idstaff'=>$_POST[''],
-        'users_idusers'=>$_POST[''],
-    ];
     if (count($errors) === 0) { 
         $id = $_POST['id'];
-        unset($_POST['update'], $_POST['id']);
+        unset($_POST['update-user'], $_POST['id']);
+        $data = [
+            'username'=>$_POST[''],
+            'vpasskey'=>$_POST[''],
+            'lastlogin'=>$_POST[''],
+            'forgot_passkey'=>$_POST[''],
+            'time_created'=>$_POST[''],
+            'pin'=>$_POST[''],
+            'pc_bio_idpc_bio'=>$_POST[''],
+            'staff_idstaff'=>$_POST[''],
+            'users_idusers'=>$_POST[''],
+        ];
         $query = update($table, $id,$data);
         $_SESSION['message'] = 'User updated successfully';
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit();
-    } else {
-        $id = $_POST['id'];
-        $name = $_POST['name'];
-        $description = $_POST['description'];
     }
+    outputData($_POST);
 
 }

@@ -137,7 +137,7 @@ if (isset($_POST['update-client'])) {
     if (count($errors) === 0) {
         $id = $_POST['id'];
         unset($_POST['update-client'], $_POST['id']);
-        $branchUpdate = update($table, $id, $_POST);
+        $clientUpdate = update($table, $id, $_POST);
         $_SESSION['message'] = 'Client Information updated successfully';
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');

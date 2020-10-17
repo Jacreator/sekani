@@ -16,28 +16,28 @@ $accounts = selectAll($table);
 function outputData($data)
 {
     return [
-        'description' => $data['interest'],
-        'description1' => $data['min_fixed_deposit'],
-        'description2' => $data['max_fixed_deposit'],
-        'description3' => $data['amortization_method'],
-        'description4' => $data['min_principal'],
-        'description5' => $data['max_principal'],
-        'description6' => $data['rule_type'],
-        'description7' => $data['products_idproducts'],
+        'description' => $data[''],
+        'description1' => $data[''],
+        'description2' => $data[''],
+        'description3' => $data[''],
+        'description4' => $data[''],
+        'description5' => $data[''],
+        'description6' => $data[''],
+        'description7' => $data[''],
 //        'description8' => $data[''],
 //        'description9' => $data[''],
 //        'description0' => $data[''],
     ];
 }
 
-if (isset($_POST['submit'])) {
+if (isset($_POST['add-deposit-product'])) {
     adminOnly();
 
     $errors = validateAccount($_POST);
 
 
     if (count($errors) === 0) {
-        unset($_POST['submit']);
+        unset($_POST['add-deposit-product']);
         $data = [
             'interest'=>$_POST[''],
             'min_fixed_deposit'=>$_POST[''],
@@ -48,73 +48,58 @@ if (isset($_POST['submit'])) {
             'rule_type'=>$_POST[''],
             'products_idproducts'=>$_POST['']
         ];
-        $query = create($table, $data);
+        $depositProduct_id = create($table, $data);
 //        dd($query);
-        $_SESSION['message'] = 'Successful';
+        $_SESSION['message'] = 'Fixed Deposit Product created Successful';
         $_SESSION['type'] = 'success';
 //        go to base page
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit(); 
-    } else {
-        $description = $_POST[''];
-        $description1 = $_POST[''];
-        $description2 = $_POST[''];
-        $description3 = $_POST[''];
-        $description4 = $_POST[''];
-        $description5 = $_POST[''];
-        $description6 = $_POST[''];
-        $description7 = $_POST[''];
-        $description8 = $_POST[''];
-        $description9 = $_POST[''];
-        $description0 = $_POST[''];
     }
+    outputData($_POST);
 }
 
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $query = selectOne($table, ['idlfixed_deposit_product ' => $id]);
-    $id = $topic['id'];
-    $name = $topic['name'];
-    $description = $topic['description'];
+    $depositProductDetails = selectOne($table, ['idlfixed_deposit_product ' => $id]);
+    outputData($depositProductDetails);
 }
 
 if (isset($_GET['del_id'])) {
     adminOnly();
     $id = $_GET['del_id'];
-    $query = delete($table, $id);
-    $_SESSION['message'] = 'Fixed deposite product deleted successfully';
+    $count = delete($table, $id);
+    $_SESSION['message'] = 'Fixed deposit product deleted successfully';
     $_SESSION['type'] = 'success';
     header('location: ' . BASE_URL . '/admin/topics/index.php');
     exit();
 }
 
 
-if (isset($_POST['update-topic'])) {
+if (isset($_POST['update-deposit-product'])) {
     adminOnly();
-    $errors = validateTopic($_POST);
-    $data = [
-        'interest'=>$_POST[''],
-        'min_fixed_deposit'=>$_POST[''],
-        'max_fixed_deposit'=>$_POST[''],
-        'amortization_method'=>$_POST[''],
-        'min_principal'=>$_POST[''],
-        'max_principal'=>$_POST[''],
-        'rule_type'=>$_POST[''],
-        'products_idproducts'=>$_POST['']
-    ];
+    $errors = validate($_POST);
+
     if (count($errors) === 0) { 
         $id = $_POST['id'];
-        unset($_POST['update-topic'], $_POST['id']);
-        $query = update($table, $id, $data);
+        unset($_POST['update-deposit-product'], $_POST['id']);
+        $data = [
+            'interest'=>$_POST[''],
+            'min_fixed_deposit'=>$_POST[''],
+            'max_fixed_deposit'=>$_POST[''],
+            'amortization_method'=>$_POST[''],
+            'min_principal'=>$_POST[''],
+            'max_principal'=>$_POST[''],
+            'rule_type'=>$_POST[''],
+            'products_idproducts'=>$_POST['']
+        ];
+        $depositProductUpdate = update($table, $id, $data);
         $_SESSION['message'] = 'Details updated successfully';
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit();
-    } else {
-        $id = $_POST['id'];
-        $name = $_POST['name'];
-        $description = $_POST['description'];
     }
+    outputData($_POST);
 
 }

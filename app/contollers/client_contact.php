@@ -17,9 +17,9 @@ $accounts = selectAll($table);
 function outputData($data)
 {
     return [
-        'description' => $data['email_active'],
-        'description1' => $data['sms_activee'],
-        'description2' => $data['client_idclient'],
+        'description' => $data[''],
+        'description1' => $data[''],
+        'description2' => $data[''],
     ];
 }
 
@@ -44,28 +44,15 @@ if (isset($_POST['submit'])) {
 //        go to base page
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit(); 
-    } else {
-        $description = $_POST[''];
-        $description1 = $_POST[''];
-        $description2 = $_POST[''];
-        $description3 = $_POST[''];
-        $description4 = $_POST[''];
-        $description5 = $_POST[''];
-        $description6 = $_POST[''];
-        $description7 = $_POST[''];
-        $description8 = $_POST[''];
-        $description9 = $_POST[''];
-        $description0 = $_POST[''];
     }
+    outputData($_POST);
 }
 
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
     $query = selectOne($table, ['idclient_contact_status' => $id]);
-    $id = $topic['id'];
-    $name = $topic['name'];
-    $description = $topic['description'];
+    outputData($query);
 }
 
 if (isset($_GET['del_id'])) {
@@ -96,10 +83,7 @@ if (isset($_POST['update'])) {
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit();
-    } else {
-        $id = $_POST['id'];
-        $name = $_POST['name'];
-        $description = $_POST['description'];
     }
+    outputData($_POST);
 
 }

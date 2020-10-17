@@ -1,7 +1,7 @@
 <?php
-include ('../../path.php');
+include('../../path.php');
 include(ROOT_PATH . "/app/database/db.php");
-//include(ROOT_PATH . "/app/helpers/middleware.php");
+include(ROOT_PATH . "/app/helpers/middleware.php");
 //include(ROOT_PATH . "/app/helpers/validateAccounts.php");
 
 $table = 'vault';
@@ -13,101 +13,111 @@ $description = '';
 
 $accounts = selectAll($table);
 //dd($accounts);
+
+/**
+ * get information from the controller back to frontend
+ *
+ * @param $data
+ * @return array
+ */
 function outputData($data)
 {
     return [
-        'description' => $data['description'],
-        'description1' => $data['last_transaction_date'],
-        'description1' => $data['balance'],
-        'description1' => $data['created_day'],
-        'description1' => $data['institution_idinstitution'],
-        'description1' => $data['branch_idbranch'],
+        'description' => $data[''],
+        'description1' => $data[''],
+        'description2' => $data[''],
+        'description3' => $data[''],
+        'description4' => $data[''],
+        'description5' => $data[''],
     ];
 }
 
-
-if (isset($_POST['submit'])) {
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the
+ * action
+ *
+ */
+if (isset($_POST['submit-vault'])) {
     adminOnly();
 
     $errors = validateAccount($_POST);
 
-
     if (count($errors) === 0) {
-        unset($_POST['submit']);
+        unset($_POST['submit-vault']);
         $data = [
-            'description'=>$_POST[''],
-            'last_transaction_date'=>$_POST[''],
-            'balance'=>$_POST[''],
-            'created_day'=>$_POST[''],
-            'institution_idinstitution'=>$_POST[''],
-            'branch_idbranch'=>$_POST['']
+            'description' => $_POST[''],
+            'last_transaction_date' => $_POST[''],
+            'balance' => $_POST[''],
+            'created_day' => $_POST[''],
+            'institution_idinstitution' => $_POST[''],
+            'branch_idbranch' => $_POST['']
         ];
-        $query = create($table, $data);
+        $vault_id = create($table, $data);
 //        dd($account_id);
-        $_SESSION['message'] = 'Successful';
+        $_SESSION['message'] = 'Vault Created Successful';
         $_SESSION['type'] = 'success';
 //        go to base page
         header('location: ' . BASE_URL . '/admin/topics/index.php');
-        exit(); 
-    } else {
-        $description = $_POST[''];
-        $description1 = $_POST[''];
-        $description2 = $_POST[''];
-        $description3 = $_POST[''];
-        $description4 = $_POST[''];
-        $description5 = $_POST[''];
-        $description6 = $_POST[''];
-        $description7 = $_POST[''];
-        $description8 = $_POST[''];
-        $description9 = $_POST[''];
-        $description0 = $_POST[''];
+        exit();
     }
+    outputData($_POST);
 }
 
-
+/**
+ * a isset that takes the trigger from the views button
+ * and returns an individual details
+ *
+ */
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $topic = selectOne($table, ['idvault_transaction' => $id]);
-    $id = $topic['id'];
-    $name = $topic['name'];
-    $description = $topic['description'];
+    $vaultDetails = selectOne($table, ['idvault_transaction' => $id]);
+    outputData($vaultDetails);
 }
 
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the
+ * action
+ * and delete the record from database
+ */
 if (isset($_GET['del_id'])) {
     adminOnly();
     $id = $_GET['del_id'];
-    $query = delete($table, $id);
+    $count = delete($table, $id);
     $_SESSION['message'] = 'Vault deleted successfully';
     $_SESSION['type'] = 'success';
     header('location: ' . BASE_URL . '/admin/topics/index.php');
     exit();
 }
 
-
-if (isset($_POST['update'])) {
+/**
+ * a isset that takes the trigger from the views button
+ * use the middleware to check if the user have rights for the action
+ * update the specified records
+ *
+ */
+if (isset($_POST['update-vault'])) {
     adminOnly();
     $errors = validateTopic($_POST);
-    $data = [
-        'description'=>$_POST[''],
-        'last_transaction_date'=>$_POST[''],
-        'balance'=>$_POST[''],
-        'created_day'=>$_POST[''],
-        'institution_idinstitution'=>$_POST[''],
-        'branch_idbranch'=>$_POST['']
-    ];
 
-    if (count($errors) === 0) { 
+    if (count($errors) === 0) {
         $id = $_POST['id'];
         unset($_POST['update'], $_POST['id']);
-        $query = update($table, $id,  $data);
+        $data = [
+            'description' => $_POST[''],
+            'last_transaction_date' => $_POST[''],
+            'balance' => $_POST[''],
+            'created_day' => $_POST[''],
+            'institution_idinstitution' => $_POST[''],
+            'branch_idbranch' => $_POST['']
+        ];
+        $query = update($table, $id, $data);
         $_SESSION['message'] = 'Vault updated successfully';
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit();
-    } else {
-        $id = $_POST['id'];
-        $name = $_POST['name'];
-        $description = $_POST['description'];
     }
+    outputData($_POST);
 
 }

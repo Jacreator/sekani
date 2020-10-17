@@ -1,7 +1,7 @@
 <?php
 include ('../../path.php');
 include(ROOT_PATH . "/app/database/db.php");
-//include(ROOT_PATH . "/app/helpers/middleware.php");
+include(ROOT_PATH . "/app/helpers/middleware.php");
 //include(ROOT_PATH . "/app/helpers/validateAccounts.php");
 
 $table = 'savings_product';
@@ -16,60 +16,46 @@ $accounts = selectAll($table);
 function outputData($data)
 {
     return [
-        'description' => $data['min_amount'],
-        'description1' => $data['intetrest'],
-        'description2' => $data['products_idproducts'],
+        'description' => $data[''],
+        'description1' => $data[''],
+        'description2' => $data[''],
     ];
 }
 
-if (isset($_POST['submit'])) {
+if (isset($_POST['submit-saving-pro'])) {
     adminOnly();
 
-    $errors = validateAccount($_POST);
-
+    $errors = validate($_POST);
 
     if (count($errors) === 0) {
-        unset($_POST['submit']);
+        unset($_POST['submit-saving-pro']);
         $data = [
             'min_amount'=>$_POST[''],
             'intetrest'=>$_POST[''],
             'products_idproducts'=>$_POST['']
         ];
-        $query = create($table, $data);
+        $savingProduct_id = create($table, $data);
 //        dd( $query);
-        $_SESSION['message'] = 'Successful';
+        $_SESSION['message'] = 'Saving Product Created Successful';
         $_SESSION['type'] = 'success';
 //        go to base page
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit(); 
-    } else {
-        $description = $_POST[''];
-        $description1 = $_POST[''];
-        $description2 = $_POST[''];
-        $description3 = $_POST[''];
-        $description4 = $_POST[''];
-        $description5 = $_POST[''];
-        $description6 = $_POST[''];
-        $description7 = $_POST[''];
-        $description8 = $_POST[''];
-        $description9 = $_POST[''];
-        $description0 = $_POST[''];
     }
+    outputData($_POST);
 }
 
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $query = selectOne($table, ['idsavings_product ' => $id]);
-    $id = $topic['id'];
-    $name = $topic['name'];
-    $description = $topic['description'];
+    $savingProductDetails = selectOne($table, ['idsavings_product ' => $id]);
+    outputData($savingProductDetails);
 }
 
 if (isset($_GET['del_id'])) {
     adminOnly();
     $id = $_GET['del_id'];
-    $query = delete($table, $id);
+    $count = delete($table, $id);
     $_SESSION['message'] = 'Savings product deleted successfully';
     $_SESSION['type'] = 'success';
     header('location: ' . BASE_URL . '/admin/topics/index.php');
@@ -77,26 +63,24 @@ if (isset($_GET['del_id'])) {
 }
 
 
-if (isset($_POST['update-topic'])) {
+if (isset($_POST['update-saving-pro'])) {
     adminOnly();
-    $errors = validateTopic($_POST);
-    $data = [
-        'min_amount'=>$_POST[''],
-        'intetrest'=>$_POST[''],
-        'products_idproducts'=>$_POST['']
-    ];
+    $errors = validate($_POST);
+
     if (count($errors) === 0) { 
         $id = $_POST['id'];
         unset($_POST['update-topic'], $_POST['id']);
-        $query = update($table, $id, $data);
+        $data = [
+            'min_amount'=>$_POST[''],
+            'intetrest'=>$_POST[''],
+            'products_idproducts'=>$_POST['']
+        ];
+        $savingProductUpdate = update($table, $id, $data);
         $_SESSION['message'] = 'Savings product updated successfully';
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit();
-    } else {
-        $id = $_POST['id'];
-        $name = $_POST['name'];
-        $description = $_POST['description'];
     }
+    outputData($_POST);
 
 }

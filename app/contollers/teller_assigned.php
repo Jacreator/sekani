@@ -1,7 +1,7 @@
 <?php
 include ('../../path.php');
 include(ROOT_PATH . "/app/database/db.php");
-//include(ROOT_PATH . "/app/helpers/middleware.php");
+include(ROOT_PATH . "/app/helpers/middleware.php");
 //include(ROOT_PATH . "/app/helpers/validateAccounts.php");
 
 $table = 'teller_assigned';
@@ -16,59 +16,46 @@ $accounts = selectAll($table);
 function outputData($data)
 {
     return [
-        'description' => $data['taff_idstaff'],
-        'description1' => $data['teller_idteller'],
+        'description' => $data[''],
+        'description1' => $data[''],
     ];
 }
 
 
-if (isset($_POST['submit'])) {
+if (isset($_POST['submit-assigned'])) {
     adminOnly();
 
     $errors = validateAccount($_POST);
 
 
     if (count($errors) === 0) {
-        unset($_POST['submit']);
+        unset($_POST['submit-assigned']);
         $data = [
             'staff_idstaff'=>$_POST[''],
             'teller_idteller'=>$_POST[''],
         ];
-        $query = create($table, $data);
+        $tellerAssigned_id = create($table, $data);
 //        dd($account_id);
-        $_SESSION['message'] = 'Successful';
+        $_SESSION['message'] = 'Teller Assign Created Successful';
         $_SESSION['type'] = 'success';
 //        go to base page
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit(); 
-    } else {
-        $description = $_POST[''];
-        $description1 = $_POST[''];
-        $description2 = $_POST[''];
-        $description3 = $_POST[''];
-        $description4 = $_POST[''];
-        $description5 = $_POST[''];
-        $description6 = $_POST[''];
-        $description7 = $_POST[''];
-        $description8 = $_POST[''];
-        $description9 = $_POST[''];
-        $description0 = $_POST[''];
     }
+    outputData($_POST);
 }
 
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $query = selectOne($table, ['idteller_assigned' => $id]);
-    $id = $topic['id'];
-    $name = $topic['name'];
-    $description = $topic['description'];
+    $tellerAssignedDetails = selectOne($table, ['idteller_assigned' => $id]);
+    outputData($tellerAssignedDetails);
 }
 
 if (isset($_GET['del_id'])) {
     adminOnly();
     $id = $_GET['del_id'];
-    $query = delete($table, $id);
+    $count = delete($table, $id);
     $_SESSION['message'] = 'Teller assigned deleted successfully';
     $_SESSION['type'] = 'success';
     header('location: ' . BASE_URL . '/admin/topics/index.php');
@@ -76,25 +63,23 @@ if (isset($_GET['del_id'])) {
 }
 
 
-if (isset($_POST['update'])) {
+if (isset($_POST['update-tel-assign'])) {
     adminOnly();
-    $errors = validateTopic($_POST);
-    $data = [
-        'staff_idstaff'=>$_POST[''],
-        'teller_idteller'=>$_POST[''],
-    ];
+    $errors = validate($_POST);
+
     if (count($errors) === 0) { 
         $id = $_POST['id'];
         unset($_POST['update'], $_POST['id']);
-        $topic_id = update($table, $id, $_POST);
+        $data = [
+            'staff_idstaff'=>$_POST[''],
+            'teller_idteller'=>$_POST[''],
+        ];
+        $topic_id = update($table, $id, $data);
         $_SESSION['message'] = 'Teller assigned updated successfully';
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit();
-    } else {
-        $id = $_POST['id'];
-        $name = $_POST['name'];
-        $description = $_POST['description'];
     }
+    outputData($_POST);
 
 }
