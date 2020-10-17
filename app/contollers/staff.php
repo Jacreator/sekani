@@ -13,6 +13,22 @@ $description = '';
 
 $accounts = selectAll($table);
 //dd($accounts);
+function outputData($data)
+{
+    return [
+        'description' => $data['first_name'],
+        'description1' => $data['middle_name'],
+        'description2' => $data['last_name'],
+        'description8' => $data['email'],
+        'description9' => $data['designation'],
+        'description0' => $data['phone_no'],
+        'description0' => $data['home_address'],
+        'description0' => $data['date_joined'],
+        'description0' => $data['employment_status'],
+        'description0' => $data['institution_idinstitution'],
+        'description0' => $data['branch_idbranch'],
+    ];
+}
 
 
 if (isset($_POST['submit'])) {
@@ -24,7 +40,6 @@ if (isset($_POST['submit'])) {
     if (count($errors) === 0) {
         unset($_POST['submit']);
         $data = [
-            'idstaff'=>$_POST[''],
             'first_name'=>$_POST[''],
             'middle_name'=>$_POST[''],
             'last_name'=>$_POST[''],
@@ -37,7 +52,7 @@ if (isset($_POST['submit'])) {
             'institution_idinstitution'=>$_POST[''],
             'branch_idbranch'=>$_POST[''],
         ];
-        $account_id = create($table, $data);
+        $query = create($table, $data);
 //        dd($account_id);
         $_SESSION['message'] = 'Successful';
         $_SESSION['type'] = 'success';
@@ -62,7 +77,7 @@ if (isset($_POST['submit'])) {
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $topic = selectOne($table, ['id' => $id]);
+    $query = selectOne($table, ['idstaff' => $id]);
     $id = $topic['id'];
     $name = $topic['name'];
     $description = $topic['description'];
@@ -71,23 +86,35 @@ if (isset($_GET['id'])) {
 if (isset($_GET['del_id'])) {
     adminOnly();
     $id = $_GET['del_id'];
-    $count = delete($table, $id);
-    $_SESSION['message'] = 'Topic deleted successfully';
+    $query = delete($table, $id);
+    $_SESSION['message'] = 'Staff deleted successfully';
     $_SESSION['type'] = 'success';
     header('location: ' . BASE_URL . '/admin/topics/index.php');
     exit();
 }
 
 
-if (isset($_POST['update-topic'])) {
+if (isset($_POST['update'])) {
     adminOnly();
     $errors = validateTopic($_POST);
-
+    $data = [
+        'first_name'=>$_POST[''],
+        'middle_name'=>$_POST[''],
+        'last_name'=>$_POST[''],
+        'email'=>$_POST[''],
+        'designation'=>$_POST[''],
+        'phone_no'=>$_POST[''],
+        'home_address'=>$_POST[''],
+        'date_joined'=>$_POST[''],
+        'employment_status'=>$_POST[''],
+        'institution_idinstitution'=>$_POST[''],
+        'branch_idbranch'=>$_POST[''],
+    ];
     if (count($errors) === 0) { 
         $id = $_POST['id'];
-        unset($_POST['update-topic'], $_POST['id']);
-        $topic_id = update($table, $id, $_POST);
-        $_SESSION['message'] = 'Topic updated successfully';
+        unset($_POST['update'], $data);
+        $query = update($table, $id,  $data);
+        $_SESSION['message'] = 'Staff updated successfully';
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit();

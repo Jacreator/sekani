@@ -13,7 +13,13 @@ $description = '';
 
 $accounts = selectAll($table);
 //dd($accounts);
-
+function outputData($data)
+{
+    return [
+        'description' => $data['teller_idteller'],
+        'description1' => $data['vault_transaction_idvault_transaction'],
+    ];
+}
 
 if (isset($_POST['submit'])) {
     adminOnly();
@@ -27,7 +33,7 @@ if (isset($_POST['submit'])) {
             'teller_idteller'=>$_POST[''],
             'vault_transaction_idvault_transaction'=>$_POST[''],
         ];
-        $account_id = create($table, $data);
+        $query = create($table, $data);
 //        dd($account_id);
         $_SESSION['message'] = 'Successful';
         $_SESSION['type'] = 'success';
@@ -52,7 +58,7 @@ if (isset($_POST['submit'])) {
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $topic = selectOne($table, ['id' => $id]);
+    $topic = selectOne($table, ['teller_idteller' => $id]);
     $id = $topic['id'];
     $name = $topic['name'];
     $description = $topic['description'];
@@ -61,23 +67,26 @@ if (isset($_GET['id'])) {
 if (isset($_GET['del_id'])) {
     adminOnly();
     $id = $_GET['del_id'];
-    $count = delete($table, $id);
-    $_SESSION['message'] = 'Topic deleted successfully';
+    $query = delete($table, $id);
+    $_SESSION['message'] = 'Teller value deleted successfully';
     $_SESSION['type'] = 'success';
     header('location: ' . BASE_URL . '/admin/topics/index.php');
     exit();
 }
 
 
-if (isset($_POST['update-topic'])) {
+if (isset($_POST['update'])) {
     adminOnly();
     $errors = validateTopic($_POST);
-
+    $data = [
+        'teller_idteller'=>$_POST[''],
+        'vault_transaction_idvault_transaction'=>$_POST[''],
+    ];
     if (count($errors) === 0) { 
         $id = $_POST['id'];
-        unset($_POST['update-topic'], $_POST['id']);
-        $topic_id = update($table, $id, $_POST);
-        $_SESSION['message'] = 'Topic updated successfully';
+        unset($_POST['update'], $_POST['id']);
+        $query = update($table, $id, $_POST);
+        $_SESSION['message'] = 'Teller value updated successfully';
         $_SESSION['type'] = 'success';
         header('location: ' . BASE_URL . '/admin/topics/index.php');
         exit();
