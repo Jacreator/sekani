@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @param $request
+ * @param array $rules
+ */
 function coreValidator($request, $rules = [])
 {
     foreach ($request as $item => $item_value) {
@@ -32,25 +36,29 @@ function coreValidator($request, $rules = [])
                         break;
 
                     case 'numeric':
-                        if (!ctype_digit($item_value) && $rule_value) {
+                        if ($rule_value && !ctype_digit($item_value)) {
                             addError($item, ucwords($item) . ' should be numeric');
                         }
                         break;
 
                     case 'alpha':
-                        if (!ctype_alpha($item_value) && $rule_value) {
+                        if ($rule_value && !ctype_alpha($item_value)) {
                             addError($item, ucwords($item) . ' should be alphabetic characters');
                         }
                         break;
 
                     case 'email':
-                        if (!filter_var($item_value, FILTER_VALIDATE_EMAIL) && $rule_value) {
+                        if ($rule_value && !filter_var($item_value, FILTER_VALIDATE_EMAIL)) {
                             addError($item, ucwords($item) . ' must be valid');
                         }
                         break;
 
                     case 'trim':
                         trim($item_value);
+                        break;
+
+                    case 'replace':
+                        preg_replace('/[^A-Za-z0-9\-]/', '', $item_value);
                         break;
 
                     case 'strip':
@@ -98,7 +106,9 @@ function error($_errors)
  */
 function errorLoop($errors)
 {
-    foreach ($errors as $errorList) return json_encode($errorList);
+    foreach ($errors as $errorList) {
+        return json_encode($errorList);
+    }
 }
 
 /**
@@ -113,16 +123,3 @@ function existing($table, $condition = [])
     return selectOne($table, $condition);
 }
 
-/**
- * a function to clean all string entered
- *
- * @param $string
- * @return string|string[]|null
- *
- */
-function clean($string)
-{
-    $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
-
-    return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
-}
