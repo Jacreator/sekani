@@ -8,8 +8,9 @@ function coreValidator($request, $rules = [])
 
             foreach ($rules[$item] as $rule => $rule_value) {
 
-                if (is_int($rule))
+                if (is_int($rule)) {
                     $rule = $rule_value;
+                }
                 switch ($rule) {
 
                     case 'required':
@@ -77,6 +78,7 @@ function addError($item, $error)
 
 
 /***
+ * @param $_errors
  * @return array|false
  * Error Check Method
  */
@@ -84,9 +86,9 @@ function error($_errors)
 {
     if (empty($_errors)) {
         return false;
-    } else {
-        return $_errors;
     }
+    return $_errors;
+
 } //End
 
 
@@ -96,21 +98,31 @@ function error($_errors)
  */
 function errorLoop($errors)
 {
-?>
-    <div class="alert alert-danger">
-        <ol>
-            <?php
-            foreach ($errors as $errorList) {
-            ?>
-                <li class="text-danger">
-                    <?php
-                    echo  json_encode($errorList);
-                    ?>
-                </li>
-            <?php
-            } ?>
-        </ol>
-    </div>
-<?php
-}//End
+    foreach ($errors as $errorList) return json_encode($errorList);
+}
 
+/**
+ * this check the database for any presence of information
+ *
+ * @param $table
+ * @param array $condition
+ * @return array|null
+ */
+function existing($table, $condition = [])
+{
+    return selectOne($table, $condition);
+}
+
+/**
+ * a function to clean all string entered
+ *
+ * @param $string
+ * @return string|string[]|null
+ *
+ */
+function clean($string)
+{
+    $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+
+    return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+}
